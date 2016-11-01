@@ -1,0 +1,40 @@
+{% extends 'photos/base.html' %}
+{% block posts_active %}active{% endblock %}
+
+{% block body %}
+<div class="posts-container container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Hot Posts</h3>
+        </div>
+        {% if posts %}
+            {% for post in posts %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a class="navbar-brand" >{{ post.user.username }}</a>
+                        <a href="{% url 'photos:detail' post.id %}">
+                            <img src="{{ post.photo.url }}" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <h2>{{ post.post_title }}</h2>
+
+                            <!-- View Details -->
+                            <a href="{% url 'photos:detail' post.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+                            <!-- Favorite post -->
+                            <a href="{% url 'photos:favorite_post' post.id %}" class="btn btn-default btn-sm btn-favorite" role="button">
+                                <span class="glyphicon glyphicon-star {% if post.is_favorite %}active{% endif %}"></span>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+
+</div>
+{% endblock %}
