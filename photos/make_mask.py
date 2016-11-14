@@ -6,13 +6,14 @@ from PIL import Image
 import website.settings
 import urllib
 import json
+import math
 import cv2
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FACE_DETECTOR_PATH = BASE_DIR + '/cascades/haar-face.xml'
-LEFT_EYE_DETECTOR_PATH = BASE_DIR + '/cascades/ojol.xml'
-RIGHT_EYE_DETECTOR_PATH = BASE_DIR + '/cascades/ojoD.xml'
+LEFT_EYE_DETECTOR_PATH = BASE_DIR + '/cascades/left.xml'
+RIGHT_EYE_DETECTOR_PATH = BASE_DIR + '/cascades/right.xml'
 
 def alpha_composite(background, mask, x, y):
     background.paste(mask, (x, y), mask)
@@ -29,12 +30,25 @@ def detect(img_url):
     bg = Image.open(BASE_DIR + img_url)
     img = Image.open(BASE_DIR + '/media/happy.png')
     for (x,y,w,h) in rectsi:
-        face = bg.crop((x, y, w, h))
-        leye = leye_cascade(face, 1.3, 5)
-        leye_x, leye_y, leye_w, leye_h = leye[0]
-        reye = reye_cascade(face, 1.3, 5)
-        reye_x, reye_y, reye_w, reye_h = leye[0]
-        bg = alpha_composite(bg, resizeimage.resize_cover(img, [w, h]), x, y)
+        face = photo1[y:y+h, x:x+w]
+        cv2.imshow('test', face)
+        angle = 0
+        leye = leye_cascade.detectMultiScale(face)
+        reye = reye_cascade.detectMultiScale(face)
+        if(len(leye) > 0 and len(reye)):
+            leye_x, leye_y, leye_w, leye_h = leye[0]
+            leye_x += leye_w/2
+            leye_y += leye_h/2
+
+            reye_x, reye_y, reye_w, reye_h = reye[0]
+            reye_x += reye_w/2
+            reye_y += reye_h/2
+
+            gip = math.sqrt(math.pow((reye_x - leye_x), 2) + math.pow((reye_y - leye_y), 2))
+            cat = abs(reye_y - leye_y)
+            angle = math.asin(cat/gip)
+
+        bg = alpha_composite(bg, resizeimage.resize_cover(img, [w, h]).rotate(-angle), x, y)
     bg.save(BASE_DIR + img_url)
 
 
