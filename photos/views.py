@@ -33,8 +33,8 @@ def create_post(request):
                 }
                 return render(request, 'photos/create_post.html', context)
             post.save()
-            for msk in maskis:
-                make_mask.detect(post.photo.url)
+            # for msk in maskis:
+            make_mask.detect(post.photo.url)
             return render(request, 'photos/detail.html', {'post': post})
         context = {
             "form": form,
