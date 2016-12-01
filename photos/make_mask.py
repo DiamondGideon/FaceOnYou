@@ -28,7 +28,7 @@ def detect(img_url):
     reye_cascade = cv2.CascadeClassifier(RIGHT_EYE_DETECTOR_PATH)
     rectsi = face_cascade.detectMultiScale(photo1, 1.3, 5)
     bg = Image.open(BASE_DIR + img_url)
-    img = Image.open(BASE_DIR + '/media/happy.png')
+    img = Image.open(BASE_DIR + '/media/spider.png')
     for (x,y,w,h) in rectsi:
         face = photo1[y:y+h, x:x+w]
         cv2.imshow('test', face)
